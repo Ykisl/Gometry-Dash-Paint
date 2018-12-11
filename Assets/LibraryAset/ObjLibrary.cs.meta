@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: aafed050711523c44b32f90af9513f9d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - TestGameObj: {fileID: 1218554977359514, guid: 37c2896142a414a47aa36615d392ed3b,
+      type: 2}
+  - BushCursor: {fileID: 1204234600708784, guid: 931859639bcaea4439b85a39c98f8561,
+      type: 2}
+  - bush01: {fileID: 1205354982308246, guid: 4fa047e3b5ecb734da5c30a74cb98731, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
