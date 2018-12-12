@@ -13,9 +13,9 @@ public class LevelEditor : MonoBehaviour {
     public static int Zrange;
     public static int Group;
     public static int Layer;
+    public static int GameObjLayer;
     public static Vector2 MousePosition;
     public static Vector2 TMousePosition;
-    public static float lastZ;
     public Text XPosTxt;
     public Text YPosTxt;
     public LocalLevels local;
@@ -25,6 +25,7 @@ public class LevelEditor : MonoBehaviour {
     public Level level;
     public static string Exefile;
     public static int LevelNumber;
+    public static bool ShowLayerGO;
     //------------------------ColorPanels
     public Button ColorNext;
     public Button ColorPrew;
@@ -56,6 +57,8 @@ public class LevelEditor : MonoBehaviour {
     public Button ArrowBtn;
     public Button BrushBtn;
     public Button SaveBtn;
+    public InputField LayerInput;
+    public Toggle isVisiblePB;
 
     void Start () {
         Zrange = Convert.ToInt32(PlayerPrefs.GetString("ZRangeVarible"));
@@ -90,16 +93,16 @@ public class LevelEditor : MonoBehaviour {
 
     void ColorListenger()
     {
-        ColorPanel1.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel1.gameObject.GetComponentInChildren<Text>().text; lastZ = lastZ - 0.2f; });
-        ColorPanel2.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel2.gameObject.GetComponentInChildren<Text>().text; lastZ = lastZ - 0.2f; });
-        ColorPanel3.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel3.gameObject.GetComponentInChildren<Text>().text; lastZ = lastZ - 0.2f; });
-        ColorPanel4.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel4.gameObject.GetComponentInChildren<Text>().text; lastZ = lastZ - 0.2f; });
-        ColorPanel5.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel5.gameObject.GetComponentInChildren<Text>().text; lastZ = lastZ - 0.2f; });
-        ColorPanel6.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel6.gameObject.GetComponentInChildren<Text>().text; lastZ = lastZ - 0.2f; });
-        ColorPanel7.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel7.gameObject.GetComponentInChildren<Text>().text; lastZ = lastZ - 0.2f; });
-        ColorPanel8.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel8.gameObject.GetComponentInChildren<Text>().text; lastZ = lastZ - 0.2f; });
-        ColorPanel9.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel9.gameObject.GetComponentInChildren<Text>().text; lastZ = lastZ - 0.2f; });
-        ColorPanel10.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel10.gameObject.GetComponentInChildren<Text>().text; lastZ = lastZ - 0.2f; });
+        ColorPanel1.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel1.gameObject.GetComponentInChildren<Text>().text;});
+        ColorPanel2.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel2.gameObject.GetComponentInChildren<Text>().text;});
+        ColorPanel3.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel3.gameObject.GetComponentInChildren<Text>().text;});
+        ColorPanel4.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel4.gameObject.GetComponentInChildren<Text>().text;});
+        ColorPanel5.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel5.gameObject.GetComponentInChildren<Text>().text;});
+        ColorPanel6.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel6.gameObject.GetComponentInChildren<Text>().text;});
+        ColorPanel7.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel7.gameObject.GetComponentInChildren<Text>().text;});
+        ColorPanel8.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel8.gameObject.GetComponentInChildren<Text>().text;});
+        ColorPanel9.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel9.gameObject.GetComponentInChildren<Text>().text;});
+        ColorPanel10.onClick.AddListener(delegate { ThisColor.gameObject.GetComponentInChildren<Text>().text = ColorPanel10.gameObject.GetComponentInChildren<Text>().text;});
     }
 
     void LoadGDColors()
@@ -118,10 +121,11 @@ public class LevelEditor : MonoBehaviour {
             GameObject go = ol.SetGameObj(level.Blocks[i].ID);
             PaintBlockInfo pbi = go.GetComponent<PaintBlockInfo>();
             pbi.ColorID = level.Colors[(level.Blocks[i] as DetailBlock).ColorDetail].ID;
+            pbi.Layer = level.Blocks[i].ZOrder;
             go.transform.localScale = new Vector3(level.Blocks[i].Scale - 0.05f, level.Blocks[i].Scale - 0.05f, level.Blocks[i].Scale - 0.05f);
             if (go != null )
             {
-                Instantiate(go, new Vector3(level.Blocks[i].PositionX /30, level.Blocks[i].PositionY/30, level.Blocks[i].ZOrder/10),Quaternion.identity);
+                Instantiate(go, new Vector3(level.Blocks[i].PositionX / 30, level.Blocks[i].PositionY / 30, level.Blocks[i].ZOrder / 10f /-1f),Quaternion.identity);
             }
         }
     }
@@ -165,10 +169,12 @@ public class LevelEditor : MonoBehaviour {
 
                 if (Input.GetMouseButton(0))
                 {
-                    AddDet(new Vector3(TMousePosition.x, TMousePosition.y, lastZ), 1887, Convert.ToInt32(ThisColor.gameObject.GetComponentInChildren<Text>().text), ol.SetGameObj(1887));
+                    AddDet(new Vector3(TMousePosition.x, TMousePosition.y, GameObjLayer/10.0f /-1f), 1887, Convert.ToInt32(ThisColor.gameObject.GetComponentInChildren<Text>().text), ol.SetGameObj(1887));
                 }
             }
         }
+        GameObjLayer = Convert.ToInt32(LayerInput.text);
+        ShowLayerGO = isVisiblePB.isOn;
     }
 
     private void FixedUpdate()
@@ -328,6 +334,7 @@ public class LevelEditor : MonoBehaviour {
     void AddDet(Vector3 position,int BlockId, int ColorID, GameObject Object)
     {
         Object.GetComponent<PaintBlockInfo>().ColorID = ColorID;
+        Object.GetComponent<PaintBlockInfo>().Layer = GameObjLayer;
         Object.transform.localScale = new Vector3(1, 1, 1);
         Object.transform.localScale = new Vector3(Object.transform.localScale.x - 0.05f, Object.transform.localScale.y - 0.05f, Object.transform.localScale.z - 0.05f);
         Instantiate(Object, position, Quaternion.identity);
@@ -336,7 +343,7 @@ public class LevelEditor : MonoBehaviour {
             PositionX = position.x * 30,
             PositionY = position.y * 30,
             ColorDetail = Convert.ToInt16(ColorID),
-            ZOrder = Convert.ToInt16(Zrange + lastZ * 10),
+            ZOrder = Convert.ToInt16(GameObjLayer),
             EditorL = Convert.ToInt16(Layer),
             Scale = Object.transform.localScale.x + 0.05f,
             
