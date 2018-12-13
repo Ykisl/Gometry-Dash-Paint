@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: fa6ac47ff957e8245b5ee2d44cbca78f
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - Arrow: {fileID: 21300000, guid: 1efe265548117f44b86b29831790a1c2, type: 3}
+  - Bush: {instanceID: 0}
+  - Eraser: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

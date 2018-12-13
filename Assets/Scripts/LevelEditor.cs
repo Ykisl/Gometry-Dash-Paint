@@ -22,10 +22,11 @@ public class LevelEditor : MonoBehaviour {
     public static int EditColorId;
     ObjLibrary ol;
     BindLibrary bl;
-    public Level level;
+    public static Level level;
     public static string Exefile;
     public static int LevelNumber;
     public static bool ShowLayerGO;
+    public static int ModeSelectID;
     //------------------------ColorPanels
     public Button ColorNext;
     public Button ColorPrew;
@@ -56,6 +57,7 @@ public class LevelEditor : MonoBehaviour {
     string Levelname;
     public Button ArrowBtn;
     public Button BrushBtn;
+    public Button EraserBtn;
     public Button SaveBtn;
     public InputField LayerInput;
     public Toggle isVisiblePB;
@@ -79,6 +81,7 @@ public class LevelEditor : MonoBehaviour {
         SaveBtn.onClick.AddListener(delegate { SaveLevel(); });
         ArrowBtn.onClick.AddListener(delegate { tm = ToolMode.Arow; });
         BrushBtn.onClick.AddListener(delegate { tm = ToolMode.Brush; });
+        EraserBtn.onClick.AddListener(delegate { tm = ToolMode.Eraser; });
         //-----------------------------------------------------------------
         string llpath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "/" + Exefile + "/CCLocalLevels.dat";
         local = new LocalLevels(llpath);
@@ -123,6 +126,8 @@ public class LevelEditor : MonoBehaviour {
             pbi.ColorID = level.Colors[(level.Blocks[i] as DetailBlock).ColorDetail].ID;
             pbi.Layer = level.Blocks[i].ZOrder;
             go.transform.localScale = new Vector3(level.Blocks[i].Scale - 0.05f, level.Blocks[i].Scale - 0.05f, level.Blocks[i].Scale - 0.05f);
+            go.GetComponent<PaintBlockInfo>().OriginX = level.Blocks[i].PositionX;
+            go.GetComponent<PaintBlockInfo>().OriginY = level.Blocks[i].PositionY;
             if (go != null )
             {
                 Instantiate(go, new Vector3(level.Blocks[i].PositionX / 30, level.Blocks[i].PositionY / 30, level.Blocks[i].ZOrder / 10f /-1f),Quaternion.identity);
@@ -172,9 +177,17 @@ public class LevelEditor : MonoBehaviour {
                     AddDet(new Vector3(TMousePosition.x, TMousePosition.y, GameObjLayer/10.0f /-1f), 1887, Convert.ToInt32(ThisColor.gameObject.GetComponentInChildren<Text>().text), ol.SetGameObj(1887));
                 }
             }
+            if (tm == ToolMode.Eraser)
+            {
+                if (Input.GetMouseButton(0))
+                {
+                    Invoke("Erase",0.0f);
+                }
+            }
         }
         GameObjLayer = Convert.ToInt32(LayerInput.text);
         ShowLayerGO = isVisiblePB.isOn;
+        ModeSelectID = (int)tm;
     }
 
     private void FixedUpdate()
@@ -189,11 +202,23 @@ public class LevelEditor : MonoBehaviour {
         }
     }
 
+    void Erase()
+    {
+        RaycastHit2D rayhit2d = Physics2D.Raycast(TMousePosition, Vector3.forward);
+        if (rayhit2d.collider != null)
+        {
+            GameObject go = rayhit2d.collider.gameObject;
+            go.GetComponent<PaintBlockInfo>().RemovePB();
+            
+        }
+    }
+
     public enum ToolMode
     {
         Arow = 0,
         Brush = 1,
-        Pencil = 2
+        Pencil = 2,
+        Eraser = 3
     }
 
     void ColorPasher()
@@ -337,6 +362,8 @@ public class LevelEditor : MonoBehaviour {
         Object.GetComponent<PaintBlockInfo>().Layer = GameObjLayer;
         Object.transform.localScale = new Vector3(1, 1, 1);
         Object.transform.localScale = new Vector3(Object.transform.localScale.x - 0.05f, Object.transform.localScale.y - 0.05f, Object.transform.localScale.z - 0.05f);
+        Object.GetComponent<PaintBlockInfo>().OriginX = position.x * 30;
+        Object.GetComponent<PaintBlockInfo>().OriginY = position.y * 30;
         Instantiate(Object, position, Quaternion.identity);
         level.AddBlock(new DetailBlock(BlockId)
         {

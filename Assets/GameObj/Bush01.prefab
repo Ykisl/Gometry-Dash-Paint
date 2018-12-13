@@ -216,7 +216,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 648141082dbb21648b9be1ecb988c7c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ColorID: 3
+  ColorID: 5
+  Layer: 0
+  OriginX: 119.301765
+  OriginY: 58.08849
 --- !u!114 &114875709147517906
 MonoBehaviour:
   m_ObjectHideFlags: 1

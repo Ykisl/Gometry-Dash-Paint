@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using GeometryDashAPI;
+using GeometryDashAPI.Levels;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +9,10 @@ public class PaintBlockInfo : MonoBehaviour {
     bool ActivePB;
     SpriteRenderer sr;
     public int Layer;
-	void Start () {
+    //----------------
+    public float OriginX;
+    public float OriginY;
+    void Start () {
         sr = GetComponent<SpriteRenderer>();
         
 	}
@@ -43,6 +48,14 @@ public class PaintBlockInfo : MonoBehaviour {
         else
         {
             sr.color = new Color32(0, 0, 0, 0);
+        }
+    }
+    public void RemovePB()
+    {
+        if (ActivePB == true)
+        {
+            LevelEditor.level.Blocks.Remove(LevelEditor.level.Blocks.Find(x => x.PositionX == OriginX & x.PositionY == OriginY));
+            Destroy(gameObject);
         }
     }
 }
