@@ -3,10 +3,13 @@ using GeometryDashAPI.Levels;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PaintBlockInfo : MonoBehaviour {
     public int ColorID;
     bool ActivePB;
+    public bool IsCursor;
+    public bool CursorInEraceMode;
     SpriteRenderer sr;
     public int Layer;
     //----------------
@@ -41,21 +44,56 @@ public class PaintBlockInfo : MonoBehaviour {
 
     void PBControl()
     {
-        if(ActivePB == true)
+        if (CursorInEraceMode == true)
         {
-            sr.color = LevelEditor.GdColors[ColorID];
+            sr.color = new Color32(0, 0, 0, 155);
         }
         else
         {
-            sr.color = new Color32(0, 0, 0, 0);
+            if (ActivePB == true)
+            {
+                sr.color = LevelEditor.GdColors[ColorID];
+            }
+            else
+            {
+                sr.color = new Color32(0, 0, 0, 0);
+            }
         }
     }
+
+     void PBRemoveControl()
+    {
+        if (LevelEditor.ModeSelectID == 3)
+        {
+            if (!EventSystem.current.IsPointerOverGameObject())
+            {
+                if (Input.GetMouseButton(0))
+                {
+                    RemovePB();
+                }
+            }
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision != null)
+        {
+            if (collision.gameObject.tag == "Cursor")
+            {
+                PBRemoveControl();
+            }
+        }
+    }
+
+
     public void RemovePB()
     {
-        if (ActivePB == true)
+        if (ActivePB == true & IsCursor == false)
         {
             LevelEditor.level.Blocks.Remove(LevelEditor.level.Blocks.Find(x => x.PositionX == OriginX & x.PositionY == OriginY));
             Destroy(gameObject);
         }
     }
+
 }

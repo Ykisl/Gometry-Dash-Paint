@@ -27,6 +27,7 @@ public class LevelEditor : MonoBehaviour {
     public static int LevelNumber;
     public static bool ShowLayerGO;
     public static int ModeSelectID;
+    GameObject BushCusor;
     //------------------------ColorPanels
     public Button ColorNext;
     public Button ColorPrew;
@@ -87,6 +88,7 @@ public class LevelEditor : MonoBehaviour {
         local = new LocalLevels(llpath);
         ol = GetComponent<ObjLibrary>();
         bl = GetComponent<BindLibrary>();
+        BushCusor = Instantiate(ol.SetGameObj(-2), new Vector3(TMousePosition.x, TMousePosition.y, -480f),Quaternion.identity);
         //-------------------------------
         LoadLevelData();
         LoadGDColors();
@@ -181,7 +183,7 @@ public class LevelEditor : MonoBehaviour {
             {
                 if (Input.GetMouseButton(0))
                 {
-                    Invoke("Erase",0.0f);
+                    
                 }
             }
         }
@@ -194,24 +196,26 @@ public class LevelEditor : MonoBehaviour {
     {
         if (tm == ToolMode.Arow)
         {
-
+            BushCusor.GetComponent<PaintBlockInfo>().CursorInEraceMode = false;
+            BushCusor.SetActive(false);
         }
         if (tm == ToolMode.Brush)
         {
-            
+            BushCusor.GetComponent<PaintBlockInfo>().CursorInEraceMode = false;
+            BushCusor.transform.localScale = new Vector3(ScaleModule.ScaleModyfy - 0.05f, ScaleModule.ScaleModyfy - 0.05f, ScaleModule.ScaleModyfy - 0.05f);
+            BushCusor.GetComponent<PaintBlockInfo>().ColorID = Convert.ToInt32(ThisColor.gameObject.GetComponentInChildren<Text>().text);
+            BushCusor.transform.position = TMousePosition;
+            BushCusor.SetActive(true);
+        }
+        if(tm == ToolMode.Eraser)
+        {
+            BushCusor.GetComponent<PaintBlockInfo>().CursorInEraceMode = true;
+            BushCusor.transform.localScale = new Vector3(ScaleModule.ScaleModyfy - 0.05f, ScaleModule.ScaleModyfy - 0.05f, ScaleModule.ScaleModyfy - 0.05f);
+            BushCusor.transform.position = TMousePosition;
+            BushCusor.SetActive(true);
         }
     }
 
-    void Erase()
-    {
-        RaycastHit2D rayhit2d = Physics2D.Raycast(TMousePosition, Vector3.forward);
-        if (rayhit2d.collider != null)
-        {
-            GameObject go = rayhit2d.collider.gameObject;
-            go.GetComponent<PaintBlockInfo>().RemovePB();
-            
-        }
-    }
 
     public enum ToolMode
     {
@@ -360,7 +364,7 @@ public class LevelEditor : MonoBehaviour {
     {
         Object.GetComponent<PaintBlockInfo>().ColorID = ColorID;
         Object.GetComponent<PaintBlockInfo>().Layer = GameObjLayer;
-        Object.transform.localScale = new Vector3(1, 1, 1);
+        Object.transform.localScale = new Vector3(ScaleModule.ScaleModyfy, ScaleModule.ScaleModyfy, ScaleModule.ScaleModyfy);
         Object.transform.localScale = new Vector3(Object.transform.localScale.x - 0.05f, Object.transform.localScale.y - 0.05f, Object.transform.localScale.z - 0.05f);
         Object.GetComponent<PaintBlockInfo>().OriginX = position.x * 30;
         Object.GetComponent<PaintBlockInfo>().OriginY = position.y * 30;
