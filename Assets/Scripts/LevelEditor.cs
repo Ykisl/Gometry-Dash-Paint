@@ -62,7 +62,7 @@ public class LevelEditor : MonoBehaviour {
     public Button SaveBtn;
     public InputField LayerInput;
     public Toggle isVisiblePB;
-
+    byte pashe = 0;
     void Start () {
         Zrange = Convert.ToInt32(PlayerPrefs.GetString("ZRangeVarible"));
         Group = Convert.ToInt32(PlayerPrefs.GetString("GrupVarible"));
@@ -88,7 +88,7 @@ public class LevelEditor : MonoBehaviour {
         local = new LocalLevels(llpath);
         ol = GetComponent<ObjLibrary>();
         bl = GetComponent<BindLibrary>();
-        BushCusor = Instantiate(ol.SetGameObj(-2), new Vector3(TMousePosition.x, TMousePosition.y, -480f),Quaternion.identity);
+        BushCusor = Instantiate(ol.SetGameObj(-2), new Vector3(TMousePosition.x, TMousePosition.y, -300f),Quaternion.identity);
         //-------------------------------
         LoadLevelData();
         LoadGDColors();
@@ -127,12 +127,12 @@ public class LevelEditor : MonoBehaviour {
             PaintBlockInfo pbi = go.GetComponent<PaintBlockInfo>();
             pbi.ColorID = level.Colors[(level.Blocks[i] as DetailBlock).ColorDetail].ID;
             pbi.Layer = level.Blocks[i].ZOrder;
-            go.transform.localScale = new Vector3(level.Blocks[i].Scale - 0.05f, level.Blocks[i].Scale - 0.05f, level.Blocks[i].Scale - 0.05f);
+            go.transform.localScale = new Vector3(level.Blocks[i].Scale - 0.08f, level.Blocks[i].Scale - 0.08f, 1);
             go.GetComponent<PaintBlockInfo>().OriginX = level.Blocks[i].PositionX;
             go.GetComponent<PaintBlockInfo>().OriginY = level.Blocks[i].PositionY;
             if (go != null )
             {
-                Instantiate(go, new Vector3(level.Blocks[i].PositionX / 30, level.Blocks[i].PositionY / 30, level.Blocks[i].ZOrder / 10f /-1f),Quaternion.identity);
+                Instantiate(go, new Vector3(level.Blocks[i].PositionX / 30, level.Blocks[i].PositionY / 30, level.Blocks[i].ZOrder /-1f),Quaternion.identity);
             }
         }
     }
@@ -176,7 +176,15 @@ public class LevelEditor : MonoBehaviour {
 
                 if (Input.GetMouseButton(0))
                 {
-                    AddDet(new Vector3(TMousePosition.x, TMousePosition.y, GameObjLayer/10.0f /-1f), 1887, Convert.ToInt32(ThisColor.gameObject.GetComponentInChildren<Text>().text), ol.SetGameObj(1887));
+                    if (pashe == 0)
+                    {
+                        AddDet(new Vector3(TMousePosition.x, TMousePosition.y, GameObjLayer / -1f), 1887, Convert.ToInt32(ThisColor.gameObject.GetComponentInChildren<Text>().text), ol.SetGameObj(1887));
+                        pashe = 1;
+                    }
+                    else
+                    {
+                        pashe = 0;
+                    }
                 }
             }
             if (tm == ToolMode.Eraser)
@@ -201,17 +209,21 @@ public class LevelEditor : MonoBehaviour {
         }
         if (tm == ToolMode.Brush)
         {
+            if (Input.GetMouseButtonUp(0))
+            {
+                pashe = 0;
+            }
             BushCusor.GetComponent<PaintBlockInfo>().CursorInEraceMode = false;
-            BushCusor.transform.localScale = new Vector3(ScaleModule.ScaleModyfy - 0.05f, ScaleModule.ScaleModyfy - 0.05f, ScaleModule.ScaleModyfy - 0.05f);
+            BushCusor.transform.localScale = new Vector3(ScaleModule.ScaleModyfy - 0.08f, ScaleModule.ScaleModyfy - 0.08f, ScaleModule.ScaleModyfy - 0.08f);
             BushCusor.GetComponent<PaintBlockInfo>().ColorID = Convert.ToInt32(ThisColor.gameObject.GetComponentInChildren<Text>().text);
-            BushCusor.transform.position = TMousePosition;
+            BushCusor.transform.position = new Vector3(TMousePosition.x, TMousePosition.y, -300f);
             BushCusor.SetActive(true);
         }
         if(tm == ToolMode.Eraser)
         {
             BushCusor.GetComponent<PaintBlockInfo>().CursorInEraceMode = true;
-            BushCusor.transform.localScale = new Vector3(ScaleModule.ScaleModyfy - 0.05f, ScaleModule.ScaleModyfy - 0.05f, ScaleModule.ScaleModyfy - 0.05f);
-            BushCusor.transform.position = TMousePosition;
+            BushCusor.transform.localScale = new Vector3(ScaleModule.ScaleModyfy - 0.08f, ScaleModule.ScaleModyfy - 0.08f, ScaleModule.ScaleModyfy - 0.08f);
+            BushCusor.transform.position = new Vector3(TMousePosition.x, TMousePosition.y, -300f);
             BushCusor.SetActive(true);
         }
     }
@@ -364,8 +376,8 @@ public class LevelEditor : MonoBehaviour {
     {
         Object.GetComponent<PaintBlockInfo>().ColorID = ColorID;
         Object.GetComponent<PaintBlockInfo>().Layer = GameObjLayer;
-        Object.transform.localScale = new Vector3(ScaleModule.ScaleModyfy, ScaleModule.ScaleModyfy, ScaleModule.ScaleModyfy);
-        Object.transform.localScale = new Vector3(Object.transform.localScale.x - 0.05f, Object.transform.localScale.y - 0.05f, Object.transform.localScale.z - 0.05f);
+        Object.transform.localScale = new Vector3(ScaleModule.ScaleModyfy, ScaleModule.ScaleModyfy, 1);
+        Object.transform.localScale = new Vector3(Object.transform.localScale.x - 0.08f, Object.transform.localScale.y - 0.08f, 1);
         Object.GetComponent<PaintBlockInfo>().OriginX = position.x * 30;
         Object.GetComponent<PaintBlockInfo>().OriginY = position.y * 30;
         Instantiate(Object, position, Quaternion.identity);
@@ -374,9 +386,9 @@ public class LevelEditor : MonoBehaviour {
             PositionX = position.x * 30,
             PositionY = position.y * 30,
             ColorDetail = Convert.ToInt16(ColorID),
-            ZOrder = Convert.ToInt16(GameObjLayer),
+            ZOrder = (short)GameObjLayer,
             EditorL = Convert.ToInt16(Layer),
-            Scale = Object.transform.localScale.x + 0.05f,
+            Scale = Object.transform.localScale.x + 0.08f,
             
         });
         

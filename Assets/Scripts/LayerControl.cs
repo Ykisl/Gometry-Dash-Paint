@@ -25,11 +25,19 @@ public class LayerControl : MonoBehaviour {
         if(mode == 1)
         {
             SelectLayer++;
+            if(SelectLayer == 0)
+            {
+                SelectLayer = 1; 
+            }
             inful.text = Convert.ToString(SelectLayer);
         }
         if(mode == -1)
         {
             SelectLayer--;
+            if (SelectLayer == 0)
+            {
+                SelectLayer = -1;
+            }
             inful.text = Convert.ToString(SelectLayer);
         }
     }
