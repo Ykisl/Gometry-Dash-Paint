@@ -25,18 +25,18 @@ public class LayerControl : MonoBehaviour {
         if(mode == 1)
         {
             SelectLayer++;
-            if(SelectLayer == 0)
+            if(SelectLayer > -3 & SelectLayer < 0)
             {
-                SelectLayer = 1; 
+                SelectLayer = 3; 
             }
             inful.text = Convert.ToString(SelectLayer);
         }
         if(mode == -1)
         {
             SelectLayer--;
-            if (SelectLayer == 0)
+            if (SelectLayer < 3 & SelectLayer > 0)
             {
-                SelectLayer = -1;
+                SelectLayer = -3;
             }
             inful.text = Convert.ToString(SelectLayer);
         }

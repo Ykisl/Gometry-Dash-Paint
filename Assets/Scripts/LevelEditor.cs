@@ -27,6 +27,7 @@ public class LevelEditor : MonoBehaviour {
     public static int LevelNumber;
     public static bool ShowLayerGO;
     public static int ModeSelectID;
+    public Vector3 cameraPosition;
     GameObject BushCusor;
     //------------------------ColorPanels
     public Button ColorNext;
@@ -63,6 +64,8 @@ public class LevelEditor : MonoBehaviour {
     public InputField LayerInput;
     public Toggle isVisiblePB;
     byte pashe = 0;
+    Vector3 CursorObjLastPos;
+    public float CursorObjSpeed;
     void Start () {
         Zrange = Convert.ToInt32(PlayerPrefs.GetString("ZRangeVarible"));
         Group = Convert.ToInt32(PlayerPrefs.GetString("GrupVarible"));
@@ -90,10 +93,12 @@ public class LevelEditor : MonoBehaviour {
         bl = GetComponent<BindLibrary>();
         BushCusor = Instantiate(ol.SetGameObj(-2), new Vector3(TMousePosition.x, TMousePosition.y, -300f),Quaternion.identity);
         //-------------------------------
+        cameraPosition = Camera.main.transform.position;
         LoadLevelData();
         LoadGDColors();
         ColorListenger();
         Levelname = local.Levels[LevelNumber].Name;
+        CursorObjLastPos = Vector3.zero;
     }
 
     void ColorListenger()
@@ -153,17 +158,19 @@ public class LevelEditor : MonoBehaviour {
         }
     }
     void Update () {
-        var cameraPosition = Camera.main.transform.position;
+        
 
         float zWorldDistanceFromCamera = transform.position.z - cameraPosition.z;
 
         var screenPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, zWorldDistanceFromCamera);
         MousePosition = Camera.main.ScreenToViewportPoint(screenPoint) * 30;
         TMousePosition = Camera.main.ScreenToWorldPoint(screenPoint);
-        XPosTxt.text = "X:" + MousePosition.x;
-        YPosTxt.text = "Y:" + MousePosition.y;
+        XPosTxt.text = "X:" + TMousePosition.x * 30;
+        YPosTxt.text = "Y:" + TMousePosition.y * 30;
         //----------------------------------------
         ColorPasher();
+        
+
         if (!EventSystem.current.IsPointerOverGameObject())
         {
             if (tm == ToolMode.Arow)
@@ -176,14 +183,26 @@ public class LevelEditor : MonoBehaviour {
 
                 if (Input.GetMouseButton(0))
                 {
-                    if (pashe == 0)
+                    if (CursorObjSpeed > 0 & CursorObjSpeed < 3)
+                    {
+                        if (pashe == 0)
+                        {
+                            AddDet(new Vector3(TMousePosition.x, TMousePosition.y, GameObjLayer / -1f), 1887, Convert.ToInt32(ThisColor.gameObject.GetComponentInChildren<Text>().text), ol.SetGameObj(1887));
+                            pashe = 1;
+                        }
+                        else
+                        {
+                            pashe = 0;
+                        }
+                    }
+                    else if(CursorObjSpeed > 3 & CursorObjSpeed < 5)
                     {
                         AddDet(new Vector3(TMousePosition.x, TMousePosition.y, GameObjLayer / -1f), 1887, Convert.ToInt32(ThisColor.gameObject.GetComponentInChildren<Text>().text), ol.SetGameObj(1887));
-                        pashe = 1;
                     }
-                    else
+                    else if (CursorObjSpeed > 5)
                     {
-                        pashe = 0;
+                        AddDet(new Vector3(TMousePosition.x, TMousePosition.y, GameObjLayer / -1f), 1887, Convert.ToInt32(ThisColor.gameObject.GetComponentInChildren<Text>().text), ol.SetGameObj(1887));
+                        AddDet(new Vector3(TMousePosition.x, TMousePosition.y, GameObjLayer / -1f), 1887, Convert.ToInt32(ThisColor.gameObject.GetComponentInChildren<Text>().text), ol.SetGameObj(1887));
                     }
                 }
             }
@@ -202,6 +221,9 @@ public class LevelEditor : MonoBehaviour {
 
     private void FixedUpdate()
     {
+        CursorObjSpeed = (BushCusor.transform.position - CursorObjLastPos).magnitude * 30;
+        CursorObjLastPos = BushCusor.transform.position;
+
         if (tm == ToolMode.Arow)
         {
             BushCusor.GetComponent<PaintBlockInfo>().CursorInEraceMode = false;

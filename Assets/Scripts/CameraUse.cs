@@ -4,61 +4,43 @@ using UnityEngine;
 
 public class CameraUse : MonoBehaviour {
 
-    Vector2 firstPressPos;
-    Vector2 secondPressPos;
-    Vector2 currentSwipe;
+    public int LevelArea = 100;
+
+
+    public int DragSpeed = 100;
 
     void Start () {
 		
 	}
-	
+
+
 	
 	void Update () {
-		
-	}
 
-    public void Swipe()
-    {
-        if (Input.GetMouseButtonDown(0))
+        var translation = Vector3.zero;
+
+
+        if (Input.GetMouseButton(2))
         {
-            firstPressPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+
+            translation -= new Vector3(Input.GetAxis("Mouse X") * DragSpeed * Time.deltaTime, Input.GetAxis("Mouse Y") * DragSpeed * Time.deltaTime, 0);
         }
-        if (Input.GetMouseButtonUp(0))
-        {
-            secondPressPos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
 
-            currentSwipe = new Vector2(secondPressPos.x - firstPressPos.x, secondPressPos.y - firstPressPos.y);
 
-            currentSwipe.Normalize();
-
-            if (currentSwipe.y > 0 & currentSwipe.x > -0.5f & currentSwipe.x < 0.5f)
-        {
-                Debug.Log("up swipe");
-            }
-            if (currentSwipe.y < 0 & currentSwipe.x > -0.5f & currentSwipe.x < 0.5f)
-        {
-                Debug.Log("down swipe");
-            }
-            if (currentSwipe.x < 0 & currentSwipe.y > -0.5f & currentSwipe.y < 0.5f)
-        {
-                Debug.Log("left swipe");
-            }
-            if (currentSwipe.x > 0 & currentSwipe.y > -0.5f & currentSwipe.y < 0.5f)
-        {
-                Debug.Log("right swipe");
-            }
-        }
+        Camera.main.transform.position += translation;
     }
+
+    
 
     private void LateUpdate()
     {
       if(transform.position.x < 0f)
         {
-            transform.position = new Vector2(0f, transform.position.y);
+            transform.position = new Vector3(0f, transform.position.y, -499);
         }
         if (transform.position.y < 0f)
         {
-            transform.position = new Vector2(transform.position.x, 0f);
+            transform.position = new Vector3(transform.position.x, 0f, -499);
         }
     }
 }
