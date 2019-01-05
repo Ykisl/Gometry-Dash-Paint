@@ -121,7 +121,7 @@ Transform:
   m_GameObject: {fileID: 1205354982308246}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 18.759214, y: 33.602623, z: 0}
-  m_LocalScale: {x: 0.92, y: 0.92, z: 1}
+  m_LocalScale: {x: 1.2235714, y: 1.2235714, z: 1}
   m_Children:
   - {fileID: 4451989709465880}
   - {fileID: 4502148299331592}
@@ -210,8 +210,8 @@ MonoBehaviour:
   IsCursor: 0
   CursorInEraceMode: 0
   Layer: 3
-  OriginX: 705.2751
-  OriginY: 114.109665
+  OriginX: 30.800007
+  OriginY: 93.36079
 --- !u!1 &1424560743183932
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CameraUse : MonoBehaviour {
 
     public int LevelArea = 100;
 
-
+    bool mbt;
     public int DragSpeed = 100;
 
     void Start () {
@@ -18,14 +19,45 @@ public class CameraUse : MonoBehaviour {
 	void Update () {
 
         var translation = Vector3.zero;
-
-
-        if (Input.GetMouseButton(2))
+        if (!EventSystem.current.IsPointerOverGameObject())
         {
-
-            translation -= new Vector3(Input.GetAxis("Mouse X") * DragSpeed * Time.deltaTime, Input.GetAxis("Mouse Y") * DragSpeed * Time.deltaTime, 0);
+            if (Input.GetMouseButtonDown(0))
+            {
+                mbt = true;
+                
+            }
         }
+        if (!Input.GetMouseButton(0))
+        {
+            mbt = false;
+        }
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            DragSpeed = 100;
+        }
+        else DragSpeed = 30;
 
+        if (LevelEditor.ModeSelectID == 0)
+        {
+            if (mbt == true)
+            {
+                translation -= new Vector3(Input.GetAxis("Mouse X") * DragSpeed * Time.deltaTime, Input.GetAxis("Mouse Y") * DragSpeed * Time.deltaTime, 0);
+            }
+            if (Input.GetMouseButton(2))
+            {
+
+                translation -= new Vector3(Input.GetAxis("Mouse X") * DragSpeed * Time.deltaTime, Input.GetAxis("Mouse Y") * DragSpeed * Time.deltaTime, 0);
+            }
+
+        }
+        else
+        {
+            if (Input.GetMouseButton(2))
+            {
+
+                translation -= new Vector3(Input.GetAxis("Mouse X") * DragSpeed * Time.deltaTime, Input.GetAxis("Mouse Y") * DragSpeed * Time.deltaTime, 0);
+            }
+        }
 
         Camera.main.transform.position += translation;
     }
