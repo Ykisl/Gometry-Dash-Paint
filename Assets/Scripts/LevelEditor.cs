@@ -61,8 +61,11 @@ public class LevelEditor : MonoBehaviour {
     public Button BrushBtn;
     public Button EraserBtn;
     public Button SaveBtn;
+    public Button SettingsBtn;
+    public GameObject SettingsWindow;
     public InputField LayerInput;
     public Toggle isVisiblePB;
+    public SpriteRenderer BGrender;
     byte pashe = 0;
     Vector3 CursorObjLastPos;
     public float CursorObjSpeed;
@@ -83,6 +86,7 @@ public class LevelEditor : MonoBehaviour {
         ColorNext.onClick.AddListener(delegate { ColorPanelNavigatonAdd(); });
         ColorPrew.onClick.AddListener(delegate { ColorPanelNavigatonUndo(); });
         SaveBtn.onClick.AddListener(delegate { SaveLevel(); });
+        SettingsBtn.onClick.AddListener(delegate { SettingsEvent(); });
         ArrowBtn.onClick.AddListener(delegate { tm = ToolMode.Arow; });
         BrushBtn.onClick.AddListener(delegate { tm = ToolMode.Brush; });
         EraserBtn.onClick.AddListener(delegate { tm = ToolMode.Eraser; });
@@ -171,6 +175,15 @@ public class LevelEditor : MonoBehaviour {
         ColorPasher();
         
 
+      
+
+        GameObjLayer = Convert.ToInt32(LayerInput.text);
+        ShowLayerGO = isVisiblePB.isOn;
+        ModeSelectID = (int)tm;
+    }
+
+    private void LateUpdate()
+    {
         if (!EventSystem.current.IsPointerOverGameObject())
         {
             if (tm == ToolMode.Arow)
@@ -195,13 +208,12 @@ public class LevelEditor : MonoBehaviour {
                             pashe = 0;
                         }
                     }
-                    else if(CursorObjSpeed > 3 & CursorObjSpeed < 5)
+                    else if (CursorObjSpeed > 3)
                     {
                         AddDet(new Vector3(TMousePosition.x, TMousePosition.y, GameObjLayer / -1f), 1887, Convert.ToInt32(ThisColor.gameObject.GetComponentInChildren<Text>().text), ol.SetGameObj(1887));
                     }
-                    else if (CursorObjSpeed > 5)
+                    else if (CursorObjSpeed < 1)
                     {
-                        AddDet(new Vector3(TMousePosition.x, TMousePosition.y, GameObjLayer / -1f), 1887, Convert.ToInt32(ThisColor.gameObject.GetComponentInChildren<Text>().text), ol.SetGameObj(1887));
                         AddDet(new Vector3(TMousePosition.x, TMousePosition.y, GameObjLayer / -1f), 1887, Convert.ToInt32(ThisColor.gameObject.GetComponentInChildren<Text>().text), ol.SetGameObj(1887));
                     }
                 }
@@ -210,13 +222,15 @@ public class LevelEditor : MonoBehaviour {
             {
                 if (Input.GetMouseButton(0))
                 {
-                    
+
                 }
             }
         }
-        GameObjLayer = Convert.ToInt32(LayerInput.text);
-        ShowLayerGO = isVisiblePB.isOn;
-        ModeSelectID = (int)tm;
+
+        if (Input.GetMouseButtonUp(0))
+        {
+            pashe = 1;
+        }
     }
 
     private void FixedUpdate()
@@ -431,6 +445,13 @@ public class LevelEditor : MonoBehaviour {
     {
         local.GetLevelByName(Levelname).LevelString = level.ToString();
         local.Save();
+    }
+
+    public void SettingsEvent()
+    {
+        SettingsWindow.SetActive(true);
+        Color32 BGCOLOR = BGrender.color;
+        SettingsWindow.GetComponent<SettingsWindow>().EnterAspect(CodeUtil.FloatToByte(BGCOLOR.g));
     }
 
 }
