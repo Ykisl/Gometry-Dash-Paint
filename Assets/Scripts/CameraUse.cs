@@ -8,7 +8,7 @@ public class CameraUse : MonoBehaviour {
     public int LevelArea = 100;
 
     bool mbt;
-    public int DragSpeed = 100;
+    public int DragSpeed = 500;
 
     void Start () {
 		
@@ -33,9 +33,9 @@ public class CameraUse : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            DragSpeed = 100;
+            DragSpeed = 300;
         }
-        else DragSpeed = 30;
+        else DragSpeed = 500;
 
         if (LevelEditor.ModeSelectID == 0)
         {
@@ -73,6 +73,10 @@ public class CameraUse : MonoBehaviour {
         if (transform.position.y < 0f)
         {
             transform.position = new Vector3(transform.position.x, 0f, -499);
+        }
+        if(transform.position.y > 80f)
+        {
+            transform.position = new Vector3(transform.position.x, 80f, -499);
         }
     }
 }

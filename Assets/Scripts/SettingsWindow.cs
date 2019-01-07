@@ -11,14 +11,12 @@ public class SettingsWindow : MonoBehaviour
     public Button CloseBTN;
     public Button SaveBTN;
     public Button OkBTN;
-    BGLModule bGLModule;
+    public BGLModule bGLModule;
     
 
     void Start()
     {
-        FBGL = CodeUtil.StringToByte(BGL.text);
         bGLModule = GetComponentInChildren<BGLModule>();
-
         //DEL
 
         CloseBTN.onClick.AddListener(delegate { CloseEvent(); });
@@ -28,7 +26,12 @@ public class SettingsWindow : MonoBehaviour
 
     public void EnterAspect(byte entaspect)
     {
+        bGLModule = GetComponentInChildren<BGLModule>();
         FBGL = entaspect;
+        while(bGLModule.sl == null)
+        {
+            return;
+        }
         bGLModule.sl.value = FBGL;
     }
 

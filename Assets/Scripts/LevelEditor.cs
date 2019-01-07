@@ -66,6 +66,8 @@ public class LevelEditor : MonoBehaviour {
     public InputField LayerInput;
     public Toggle isVisiblePB;
     public SpriteRenderer BGrender;
+    public GameObject SaveEventPanel;
+    public SaveTextModule STM;
     byte pashe = 0;
     Vector3 CursorObjLastPos;
     public float CursorObjSpeed;
@@ -136,7 +138,7 @@ public class LevelEditor : MonoBehaviour {
             PaintBlockInfo pbi = go.GetComponent<PaintBlockInfo>();
             pbi.ColorID = level.Colors[(level.Blocks[i] as DetailBlock).ColorDetail].ID;
             pbi.Layer = level.Blocks[i].ZOrder;
-            go.transform.localScale = new Vector3(level.Blocks[i].Scale - 0.08f, level.Blocks[i].Scale - 0.08f, 1);
+            go.transform.localScale = new Vector3(level.Blocks[i].Scale - 0.11f, level.Blocks[i].Scale - 0.11f, 1);
             go.GetComponent<PaintBlockInfo>().OriginX = level.Blocks[i].PositionX;
             go.GetComponent<PaintBlockInfo>().OriginY = level.Blocks[i].PositionY;
             if (go != null )
@@ -250,7 +252,7 @@ public class LevelEditor : MonoBehaviour {
                 pashe = 0;
             }
             BushCusor.GetComponent<PaintBlockInfo>().CursorInEraceMode = false;
-            BushCusor.transform.localScale = new Vector3(ScaleModule.ScaleModyfy - 0.08f, ScaleModule.ScaleModyfy - 0.08f, ScaleModule.ScaleModyfy - 0.08f);
+            BushCusor.transform.localScale = new Vector3(ScaleModule.ScaleModyfy - 0.11f, ScaleModule.ScaleModyfy - 0.11f, ScaleModule.ScaleModyfy - 0.11f);
             BushCusor.GetComponent<PaintBlockInfo>().ColorID = Convert.ToInt32(ThisColor.gameObject.GetComponentInChildren<Text>().text);
             BushCusor.transform.position = new Vector3(TMousePosition.x, TMousePosition.y, -300f);
             BushCusor.SetActive(true);
@@ -258,7 +260,7 @@ public class LevelEditor : MonoBehaviour {
         if(tm == ToolMode.Eraser)
         {
             BushCusor.GetComponent<PaintBlockInfo>().CursorInEraceMode = true;
-            BushCusor.transform.localScale = new Vector3(ScaleModule.ScaleModyfy - 0.08f, ScaleModule.ScaleModyfy - 0.08f, ScaleModule.ScaleModyfy - 0.08f);
+            BushCusor.transform.localScale = new Vector3(ScaleModule.ScaleModyfy - 0.11f, ScaleModule.ScaleModyfy - 0.11f, ScaleModule.ScaleModyfy - 0.11f);
             BushCusor.transform.position = new Vector3(TMousePosition.x, TMousePosition.y, -300f);
             BushCusor.SetActive(true);
         }
@@ -413,7 +415,7 @@ public class LevelEditor : MonoBehaviour {
         Object.GetComponent<PaintBlockInfo>().ColorID = ColorID;
         Object.GetComponent<PaintBlockInfo>().Layer = GameObjLayer;
         Object.transform.localScale = new Vector3(ScaleModule.ScaleModyfy, ScaleModule.ScaleModyfy, 1);
-        Object.transform.localScale = new Vector3(Object.transform.localScale.x - 0.08f, Object.transform.localScale.y - 0.08f, 1);
+        Object.transform.localScale = new Vector3(Object.transform.localScale.x - 0.11f, Object.transform.localScale.y - 0.11f, 1);
         Object.GetComponent<PaintBlockInfo>().OriginX = position.x * 30;
         Object.GetComponent<PaintBlockInfo>().OriginY = position.y * 30;
         Instantiate(Object, position, Quaternion.identity);
@@ -424,7 +426,7 @@ public class LevelEditor : MonoBehaviour {
             ColorDetail = Convert.ToInt16(ColorID),
             ZOrder = (short)GameObjLayer,
             EditorL = Convert.ToInt16(Layer),
-            Scale = Object.transform.localScale.x + 0.08f,
+            Scale = Object.transform.localScale.x + 0.11f,
             
         });
         
@@ -432,19 +434,41 @@ public class LevelEditor : MonoBehaviour {
 
     void SaveLevel()
     {
-        for (short i = 0; i < 1000; i++)
+        SaveEventPanel.SetActive(true);
+        STM.SetState(0);
+        try
         {
-            level.Colors[i] = new GeometryDashAPI.Levels.Color(i, GdColors[i].r, GdColors[i].g, GdColors[i].b);
-            level.Colors[i].Opacity = GdColors[i].a / 255.0f;
+            for (short i = 0; i < 1000; i++)
+            {
+                level.Colors[i] = new GeometryDashAPI.Levels.Color(i, GdColors[i].r, GdColors[i].g, GdColors[i].b);
+                level.Colors[i].Opacity = GdColors[i].a / 255.0f;
+            }
+            Invoke("SaveLevelPart2", 1.0f);
         }
-        Invoke("SaveLevelPart2", 1.0f);
+        catch
+        {
+            STM.SetState(2);
+            Invoke("SaveMClose", 1.0f);
+        }
         
     }
 
+    
+
     public void SaveLevelPart2()
     {
-        local.GetLevelByName(Levelname).LevelString = level.ToString();
-        local.Save();
+        try
+        {
+            local.GetLevelByName(Levelname).LevelString = level.ToString();
+            local.Save();
+            STM.SetState(1);
+            Invoke("SaveMClose", 1.0f);
+        }
+        catch
+        {
+            STM.SetState(2);
+            Invoke("SaveMClose", 1.0f);
+        }
     }
 
     public void SettingsEvent()
@@ -452,6 +476,11 @@ public class LevelEditor : MonoBehaviour {
         SettingsWindow.SetActive(true);
         Color32 BGCOLOR = BGrender.color;
         SettingsWindow.GetComponent<SettingsWindow>().EnterAspect(CodeUtil.FloatToByte(BGCOLOR.g));
+    }
+
+    void SaveMClose()
+    {
+        SaveEventPanel.SetActive(false);
     }
 
 }
