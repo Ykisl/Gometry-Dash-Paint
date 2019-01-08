@@ -61,12 +61,14 @@ public class LevelEditor : MonoBehaviour {
     public Button BrushBtn;
     public Button EraserBtn;
     public Button SaveBtn;
+    public Button CloseBtn;
     public Button SettingsBtn;
     public GameObject SettingsWindow;
     public InputField LayerInput;
     public Toggle isVisiblePB;
     public SpriteRenderer BGrender;
     public GameObject SaveEventPanel;
+    public GameObject CloseEventPanel;
     public SaveTextModule STM;
     byte pashe = 0;
     Vector3 CursorObjLastPos;
@@ -89,6 +91,7 @@ public class LevelEditor : MonoBehaviour {
         ColorPrew.onClick.AddListener(delegate { ColorPanelNavigatonUndo(); });
         SaveBtn.onClick.AddListener(delegate { SaveLevel(); });
         SettingsBtn.onClick.AddListener(delegate { SettingsEvent(); });
+        CloseBtn.onClick.AddListener(delegate { CloseEventPanel.SetActive(true); });
         ArrowBtn.onClick.AddListener(delegate { tm = ToolMode.Arow; });
         BrushBtn.onClick.AddListener(delegate { tm = ToolMode.Brush; });
         EraserBtn.onClick.AddListener(delegate { tm = ToolMode.Eraser; });
@@ -196,8 +199,12 @@ public class LevelEditor : MonoBehaviour {
             if (tm == ToolMode.Brush)
             {
 
+                BushCusor.transform.localScale = new Vector3(ScaleModule.ScaleModyfy - 0.11f, ScaleModule.ScaleModyfy - 0.11f, ScaleModule.ScaleModyfy - 0.11f);
+                BushCusor.transform.position = new Vector3(TMousePosition.x, TMousePosition.y, -300f);
+
                 if (Input.GetMouseButton(0))
                 {
+                    
                     if (CursorObjSpeed > 0 & CursorObjSpeed < 3)
                     {
                         if (pashe == 0)
@@ -222,9 +229,11 @@ public class LevelEditor : MonoBehaviour {
             }
             if (tm == ToolMode.Eraser)
             {
+                BushCusor.transform.localScale = new Vector3(ScaleModule.ScaleModyfy - 0.11f, ScaleModule.ScaleModyfy - 0.11f, ScaleModule.ScaleModyfy - 0.11f);
+                BushCusor.transform.position = new Vector3(TMousePosition.x, TMousePosition.y, -300f);
                 if (Input.GetMouseButton(0))
                 {
-
+                    
                 }
             }
         }
@@ -234,6 +243,7 @@ public class LevelEditor : MonoBehaviour {
             pashe = 1;
         }
     }
+
 
     private void FixedUpdate()
     {
@@ -254,14 +264,11 @@ public class LevelEditor : MonoBehaviour {
             BushCusor.GetComponent<PaintBlockInfo>().CursorInEraceMode = false;
             BushCusor.transform.localScale = new Vector3(ScaleModule.ScaleModyfy - 0.11f, ScaleModule.ScaleModyfy - 0.11f, ScaleModule.ScaleModyfy - 0.11f);
             BushCusor.GetComponent<PaintBlockInfo>().ColorID = Convert.ToInt32(ThisColor.gameObject.GetComponentInChildren<Text>().text);
-            BushCusor.transform.position = new Vector3(TMousePosition.x, TMousePosition.y, -300f);
             BushCusor.SetActive(true);
         }
         if(tm == ToolMode.Eraser)
         {
             BushCusor.GetComponent<PaintBlockInfo>().CursorInEraceMode = true;
-            BushCusor.transform.localScale = new Vector3(ScaleModule.ScaleModyfy - 0.11f, ScaleModule.ScaleModyfy - 0.11f, ScaleModule.ScaleModyfy - 0.11f);
-            BushCusor.transform.position = new Vector3(TMousePosition.x, TMousePosition.y, -300f);
             BushCusor.SetActive(true);
         }
     }
@@ -432,7 +439,7 @@ public class LevelEditor : MonoBehaviour {
         
     }
 
-    void SaveLevel()
+    public void SaveLevel()
     {
         SaveEventPanel.SetActive(true);
         STM.SetState(0);
@@ -482,6 +489,8 @@ public class LevelEditor : MonoBehaviour {
     {
         SaveEventPanel.SetActive(false);
     }
+
+
 
 }
 
