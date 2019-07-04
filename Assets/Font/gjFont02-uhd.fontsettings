@@ -6,10 +6,10 @@ Font:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: gjFont02-uhd 1
+  m_Name: gjFont02-uhd
   serializedVersion: 5
   m_LineSpacing: 132
-  m_DefaultMaterial: {fileID: 21327471118814800}
+  m_DefaultMaterial: {fileID: 8198044683105631474}
   m_FontSize: 124
   m_Texture: {fileID: 0}
   m_AsciiStartOffset: 0
@@ -2309,7 +2309,7 @@ Font:
   m_FontRenderingMode: 0
   m_UseLegacyBoundsCalculation: 0
   m_ShouldRoundAdvanceValue: 1
---- !u!21 &21327471118814800
+--- !u!21 &8198044683105631474
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
